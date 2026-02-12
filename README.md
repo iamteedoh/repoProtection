@@ -43,6 +43,16 @@ The script requires the [GitHub CLI](https://cli.github.com/). Install it for yo
 
 For other platforms, see the [official installation guide](https://github.com/cli/cli#installation).
 
+### jq
+
+The script uses [jq](https://jqlang.github.io/jq/) to parse JSON responses from the GitHub API.
+
+| Platform | Command |
+|----------|---------|
+| macOS (Homebrew) | `brew install jq` |
+| Fedora/RHEL (dnf) | `sudo dnf install jq` |
+| Debian/Ubuntu (apt) | `sudo apt install jq` |
+
 ### Authentication
 
 After installing, authenticate with GitHub:
@@ -79,9 +89,15 @@ If no owner is specified, it defaults to the authenticated GitHub user.
 The script validates the following before applying any changes:
 
 1. **`gh` is installed** — if not, it prints install instructions for macOS, Fedora/RHEL, and Debian/Ubuntu
-2. **`gh` is authenticated** — if not, it prompts you to run `gh auth login`
-3. **Repository exists** — verifies the repo and its default branch are accessible
-4. **Existing protection** — if rules already exist on the branch, it prompts for confirmation before overwriting
+2. **`jq` is installed** — if not, it prints install instructions for macOS, Fedora/RHEL, and Debian/Ubuntu
+3. **`gh` is authenticated** — if not, it prompts you to run `gh auth login`
+4. **Repository exists** — verifies the repo and its default branch are accessible
+5. **Existing protection** — if rules already exist, the script displays a side-by-side comparison of current vs. new settings and presents three options:
+   - **Merge** — keeps existing settings and only adds missing protections (never weakens security)
+   - **Overwrite** — replaces all settings with the script's defaults
+   - **Abort** — makes no changes
+
+If existing protection already matches the script's defaults, it reports that no changes are needed and exits.
 
 ## Installation
 
