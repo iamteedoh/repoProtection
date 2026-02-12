@@ -86,7 +86,7 @@ The script validates the following before applying any changes:
 ## Installation
 
 ```bash
-git clone git@github.com:<your-username>/repoProtection.git
+git clone git@github.com:iamteedoh/repoProtection.git
 chmod +x repoProtection/repoProtection.sh
 ```
 
