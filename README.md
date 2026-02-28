@@ -1,6 +1,9 @@
 # repoProtection
 
-A bash script that applies branch protection rules to a GitHub repository's default branch using the GitHub CLI (`gh`).
+A collection of bash scripts for managing GitHub repositories using the GitHub CLI (`gh`):
+
+- **repoProtection.sh** — Apply branch protection rules to a repository's default branch
+- **repoList.sh** — List repositories with sorting/filtering and manage GNU GPL v3 licenses
 
 ## Why This Matters
 
@@ -113,3 +116,78 @@ Then run it directly or add it to your `$PATH`.
 - The script auto-detects the repository's default branch
 - Only applies to a single repository per invocation
 - No sensitive data is stored in the script — authentication is handled by `gh`
+
+---
+
+## repoList.sh
+
+List all your GitHub repositories with sorting and filtering, check for GNU GPL v3 licenses, and interactively add the license to repos that are missing it.
+
+### Why This Matters
+
+Open-source repositories without a license are technically "all rights reserved" — no one can legally use, modify, or distribute the code. Adding a GPL-3.0 license ensures your public repos are properly licensed and that downstream users must share their modifications under the same terms.
+
+### What It Does
+
+- **List repos** — display all your repos in a formatted table with visibility, stars, license, and last updated date
+- **Sort** — by latest activity, star count, name, or visibility (public first)
+- **Filter** — show all, public-only, or private-only repos
+- **License check** — categorize repos by license status (GPL-3.0 / other / none)
+- **License add** — interactively add GPL-3.0 to repos missing it, with warnings before replacing existing licenses
+
+### Usage
+
+#### List repositories
+
+```bash
+# List all repos (sorted by latest activity)
+./repoList.sh list
+
+# List public repos sorted by stars
+./repoList.sh list --sort stars --filter public
+
+# List private repos sorted by name (max 50)
+./repoList.sh list --filter private --sort name --limit 50
+
+# List all repos grouped by visibility
+./repoList.sh list --sort visibility
+```
+
+#### Check licenses
+
+```bash
+# Check which public repos lack GPL-3.0
+./repoList.sh license --check
+
+# Check license status across all repos
+./repoList.sh license --check --filter all
+
+# Interactively add GPL-3.0 to public repos missing it
+./repoList.sh license --add
+```
+
+### List Options
+
+| Option | Values | Default | Description |
+|--------|--------|---------|-------------|
+| `--sort` | `latest`, `stars`, `name`, `visibility` | `latest` | Sort method |
+| `--filter` | `all`, `public`, `private` | `all` | Visibility filter |
+| `--limit` | any positive integer | `100` | Max repos to display |
+
+### License Options
+
+| Option | Description |
+|--------|-------------|
+| `--check` | Show license status summary (default action) |
+| `--add` | Interactively add GPL-3.0 to repos missing it |
+| `--filter` | Visibility filter (default: `public` for license subcommand) |
+
+### Interactive License Flow
+
+When using `--add`, the script presents three options:
+
+- **[a] Add to all** — adds GPL-3.0 to every eligible repo (prompts before replacing existing non-GPL licenses)
+- **[s] Select individual** — step through each repo one by one
+- **[q] Quit** — make no changes
+
+Archived and empty repos are automatically excluded from the candidates list.
